@@ -6,9 +6,9 @@
           <b-form-select
               id="input-3"
               v-model="selectedLocation"
-              :options="pokemons"
+              :options="locations"
               required
-              @change="getPokemonDetail"
+              @change="getgameIndices"
           ></b-form-select>
         </b-form-group>
       </b-form>
@@ -16,14 +16,22 @@
               class="mt-3"
               :header="'Ubicacion seleccionada: ' + selectedLocation"
       >
-        <pre class="m-0">{{  }}</pre>
         <b-card-body>
-          <b-button v-b-toggle.collapse-1 variant="primary">Habilidades</b-button>
-          <b-collapse id="collapse-1" class="mt-2">
+          <b-button v-b-toggle.collapse-2 variant="primary">Locaciones</b-button>
+          <b-collapse id="collapse-2" class="mt-2">
             <b-card>
                 <ul>
-                    <li :key="index" v-for="(item,index) in pokemonDetail.locations">
-                        {{item.ability.name}}
+                    <li> {{game_indices.name}}
+                    </li>
+                </ul>
+            </b-card>
+          </b-collapse>
+          <b-button v-b-toggle.collapse-3 variant="primary">Names</b-button>
+          <b-collapse id="collapse-3" class="mt-2">
+            <b-card>
+                <ul>
+                    <li :key="index" v-for="(item,index) in game_indices.names">
+                        {{item.language.name}}
                     </li>
                 </ul>
             </b-card>
@@ -34,35 +42,36 @@
   </div>
 </template>
 <script>
+
 import axios from 'axios'
-const BASE_URL = 'https://pokeapi.co/api/v2/location/'
+const BASE_URL = 'https://pokeapi.co/api/v2/'
 export default {
   data() {
     return {
       selectedLocation: null,
-      pokemons: [],
-      pokemonDetail: {}
+      locations: [],
+      game_indices: {}
     }
   },
   mounted() {
-    this.getFirstTenPokemons()
+    this.getFirstTenLocations()
   },
   methods: {
-    getFirstTenPokemons () {
-      const resource = 'pokemon?limit=10'
+    getFirstTenLocations () {
+      const resource = 'location?limit=10'
       axios.get(BASE_URL + resource)
           .then(res => {
-            this.pokemons = res.data.results.map(pokemon => pokemon.name)
+            this.locations = res.data.results.map(location => location.name)
           })
           .catch(err => {
             console.log(err)
           })
     },
-    getPokemonDetail () {
+    getgameIndices () {
       const resource = 'location/' + this.selectedLocation
       axios.get(BASE_URL + resource)
           .then(res => {
-            this.pokemonDetail = res.data
+            this.game_indices = res.data
           })
           .catch(err => {
             console.log(err)
